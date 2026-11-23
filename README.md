@@ -86,6 +86,10 @@ app/       Flutter app
 
 Tests: `cd backend && dart test`, `cd app && flutter test`.
 
+## Validation status
+
+Backend and Flutter analysis and automated tests pass. The reported signing-flow test used phone-sized Chrome, not an Android or iOS WebView. Native-device testing and end-to-end webhook delivery still need verification.
+
 ## Links
 
 - [Embedded signing (iFrame) reference](https://developers.signwell.com/reference/embedded-iframe)
