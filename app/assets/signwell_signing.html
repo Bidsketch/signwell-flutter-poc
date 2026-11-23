@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>SignWell signing</title>
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; background: #ffffff; }
+    /* The SignWell iFrame fills the whole WebView. */
+    #signwell-container { position: fixed; inset: 0; }
+    #signwell-container iframe { border: 0 !important; }
+  </style>
+  <script>
+    // Sends an event to Flutter through the JavaScript channel named
+    // "SignWellBridge" (see lib/src/signing_screen.dart).
+    function sendToApp(type, data) {
+      var message = JSON.stringify({ type: type, data: data || null });
+      if (window.SignWellBridge && window.SignWellBridge.postMessage) {
+        window.SignWellBridge.postMessage(message);
+      }
+    }
+  </script>
+  <!-- SignWell's embed library: https://developers.signwell.com/reference/embedded-iframe -->
+  <script src="https://static.signwell.com/assets/embedded.js"
+          onerror="sendToApp('error', { message: 'Could not load SignWell. Check the internet connection.' })"></script>
+</head>
+<body>
+  <div id="signwell-container"></div>
+  <script>
+    (function () {
+      if (typeof SignWellEmbed === 'undefined') return; // onerror above reports it
+      try {
+        var embed = new SignWellEmbed({
+          // Replaced by the app with the JSON-encoded embedded_signing_url.
+          url: __SIGNWELL_SIGNING_URL__,
+          // Render inside the container instead of SignWell's modal; the app
+          // shows its own close button.
+          containerId: 'signwell-container',
+          // Keep the signer inside the app after signing or declining, even
+          // if the SignWell account has "redirect after signing" set.
+          allowRedirect: false,
+          events: {
+            iframeLoaded: function (e) { sendToApp('iframeLoaded', e); },
+            documentLoaded: function (e) { sendToApp('documentLoaded', e); },
+            completed: function (e) { sendToApp('completed', e); },
+            declined: function (e) { sendToApp('declined', e); },
+            closed: function (e) { sendToApp('closed', e); },
+            error: function (e) { sendToApp('error', { message: String((e && e.message) || e) }); }
+          }
+        });
+        embed.open();
+      } catch (err) {
+        sendToApp('error', { message: String(err) });
+      }
+    })();
+  </script>
+</body>
+</html>

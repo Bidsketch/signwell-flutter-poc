@@ -1,0 +1,17 @@
+name: signwell_flutter_poc_backend
+description: Minimal backend for the SignWell Flutter proof of concept. Holds the API key and creates embedded signing documents.
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ^3.5.0
+
+dependencies:
+  crypto: ^3.0.3
+  http: ^1.2.0
+  shelf: ^1.4.1
+  shelf_router: ^1.1.4
+
+dev_dependencies:
+  lints: ^5.0.0
+  test: ^1.25.0
